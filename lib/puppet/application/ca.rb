@@ -6,7 +6,7 @@ Puppet::Application.new(:ca) do
 
     should_parse_config
 
-    attr_accessor :mode, :all, :ca, :digest
+    attr_accessor :mode, :all, :ca, :digest, :signed
 
     def find_mode(opt)
         modes = Puppet::SSL::CertificateAuthority::Interface::INTERFACE_METHODS
@@ -26,6 +26,10 @@ Puppet::Application.new(:ca) do
         @digest = arg
     end
 
+    option("--signed", "-s") do
+        @signed = true
+    end
+
     option("--debug", "-d") do |arg|
         Puppet::Util::Log.level = :debug
     end
@@ -43,6 +47,8 @@ Puppet::Application.new(:ca) do
     command(:main) do
         if @all
             hosts = :all
+        elsif @signed
+            hosts = :signed
         else
             hosts = ARGV.collect { |h| puts h; h.downcase }
         end
