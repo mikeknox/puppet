@@ -4,9 +4,9 @@ require File.dirname(__FILE__) + '/../../spec_helper'
 
 require 'puppet_spec/files'
 
-require 'puppet/application/main'
+require 'puppet/application/agent'
 
-describe "main" do
+describe "agent" do
     include PuppetSpec::Files
 
     describe "when applying provided catalogs" do
@@ -21,7 +21,7 @@ describe "main" do
 
             File.open(manifest, "w") { |f| f.print catalog.to_pson }
 
-            puppet = Puppet::Application[:main]
+            puppet = Puppet::Application[:agent]
             puppet.options[:catalog] = manifest
 
             puppet.apply
