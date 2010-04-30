@@ -12,42 +12,42 @@ describe Puppet::Util::CommandLine do
     end
 
     it "should pull off the first argument if it looks like a subcommand" do
-        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w( client --help whatever.pp ), @tty )
+        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w{ client --help whatever.pp }, @tty )
 
         command.should == "client"
-        args.should    == %w( --help whatever.pp )
+        args.should    == %w{ --help whatever.pp }
     end
 
     it "should use 'apply' if the first argument looks like a .pp file" do
-        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w( whatever.pp ), @tty )
+        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w{ whatever.pp }, @tty )
 
         command.should == "apply"
-        args.should    == %w( whatever.pp )
+        args.should    == %w{ whatever.pp }
     end
 
     it "should use 'apply' if the first argument looks like a .rb file" do
-        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w( whatever.rb ), @tty )
+        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w{ whatever.rb }, @tty )
 
         command.should == "apply"
-        args.should    == %w( whatever.rb )
+        args.should    == %w{ whatever.rb }
     end
 
     it "should use 'apply' if the first argument looks like a flag" do
-        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w( --debug ), @tty )
+        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w{ --debug }, @tty )
 
         command.should == "apply"
-        args.should    == %w( --debug )
+        args.should    == %w{ --debug }
     end
 
     it "should use 'apply' if the first argument is -" do
-        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w( - ), @tty )
+        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w{ - }, @tty )
 
         command.should == "apply"
-        args.should    == %w( - )
+        args.should    == %w{ - }
     end
 
     it "should return nil if the first argument is --help" do
-        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w( --help ), @tty )
+        command, args = Puppet::Util::CommandLine.subcommand_and_args("puppet", %w{ --help }, @tty )
 
         command.should == nil
     end
