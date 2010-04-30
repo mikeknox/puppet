@@ -85,7 +85,7 @@ class Puppet::SSL::Host
 
     # Specify how we expect to interact with our certificate authority.
     def self.ca_location=(mode)
-        raise ArgumentError, "CA Mode can only be %s" % CA_MODES.collect { |m| m.to_s }.join(", ") unless CA_MODES.include?(mode)
+        raise ArgumentError, "CA Mode can only be #{CA_MODES.collect { |m| m.to_s }.join(", ")}" unless CA_MODES.include?(mode)
 
         @ca_location = mode
 
@@ -230,7 +230,7 @@ class Puppet::SSL::Host
         rescue SystemExit,NoMemoryError
             raise
         rescue Exception => detail
-            Puppet.err "Could not request certificate: %s" % detail.to_s
+            Puppet.err "Could not request certificate: #{detail}"
             if time < 1
                 puts "Exiting; failed to retrieve certificate and waitforcert is disabled"
                 exit(1)
@@ -251,7 +251,7 @@ class Puppet::SSL::Host
                 break if certificate
                 Puppet.notice "Did not receive certificate"
             rescue StandardError => detail
-                Puppet.err "Could not request certificate: %s" % detail.to_s
+                Puppet.err "Could not request certificate: #{detail}"
             end
         end
     end

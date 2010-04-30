@@ -35,7 +35,7 @@ class Puppet::Application::Cert < Puppet::Application
     end
 
     Puppet::SSL::CertificateAuthority::Interface::INTERFACE_METHODS.reject {|m| m == :destroy }.each do |method|
-        option("--#{method}", "-%s" % method.to_s[0,1] ) do
+        option("--#{method}", "-#{method.to_s[0,1]}") do
             find_mode("--#{method}")
         end
     end
