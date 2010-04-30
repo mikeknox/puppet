@@ -361,12 +361,10 @@ class Puppet::Application
     private
 
     def exit_on_fail(message, code = 1)
-        begin
             yield
-        rescue RuntimeError, NotImplementedError => detail
+    rescue RuntimeError, NotImplementedError => detail
             puts detail.backtrace if Puppet[:trace]
             $stderr.puts "Could not #{message}: #{detail}"
             exit(code)
-        end
     end
 end
