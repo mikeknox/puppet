@@ -292,7 +292,7 @@ class Puppet::Util::Settings
                 end
                 break if @name
             end
-            @name = convert(@config[:name].default).intern unless @name
+            @name ||= convert(@config[:name].default).intern
         end
         @name
     end

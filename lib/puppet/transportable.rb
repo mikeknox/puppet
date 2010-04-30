@@ -35,7 +35,7 @@ module Puppet
         end
 
         def ref
-            @ref = Puppet::Resource.new(@type, @name) unless defined?(@ref)
+            @ref ||= Puppet::Resource.new(@type, @name)
             @ref.to_s
         end
 
@@ -240,7 +240,7 @@ module Puppet
         end
 
         def param(param,value)
-            @parameters = {} unless defined?(@parameters)
+            @parameters ||= {}
             @parameters[param] = value
         end
 
