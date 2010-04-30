@@ -52,7 +52,7 @@ module Puppet
 
             def self.available_subcommands
                 appdir = File.join('puppet', 'application')
-                absolute_appdir = $:.collect { |x| File.join(x,'puppet','application') }.detect{ |x| File.directory?(x) }
+                absolute_appdir = $LOAD_PATH.collect { |x| File.join(x,'puppet','application') }.detect{ |x| File.directory?(x) }
                 Dir[File.join(absolute_appdir, '*.rb')].map{|fn| File.basename(fn, '.rb')}
             end
 
