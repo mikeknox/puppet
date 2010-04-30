@@ -12,7 +12,7 @@ require 'optparse'
 #
 # For legacy compatibility,
 #      Puppet::Application[:example].run
-# is equivalent to  
+# is equivalent to
 #      Puppet::Application::Example.new.run
 #
 #
@@ -181,7 +181,7 @@ class Puppet::Application
         end
 
         def should_parse_config?
-            if ! defined? @parse_config
+            if ! defined?(@parse_config)
                 @parse_config = true
             end
             return @parse_config
@@ -243,7 +243,7 @@ class Puppet::Application
     end
 
     def option_parser
-        return @option_parser if defined? @option_parser
+        return @option_parser if defined?(@option_parser)
 
         @option_parser = OptionParser.new(self.class.banner)
 

@@ -56,7 +56,7 @@ class Puppet::Application::Master < Puppet::Application
         raise ArgumentError, "Cannot render compiled catalogs without pson support" unless Puppet.features.pson?
         begin
             unless catalog = Puppet::Resource::Catalog.find(options[:node])
-                raise "Could not compile catalog for %s" % options[:node] 
+                raise "Could not compile catalog for %s" % options[:node]
             end
 
             $stdout.puts catalog.render(:pson)

@@ -72,7 +72,10 @@ class Puppet::Application::Doc < Puppet::Application
         end
         files += command_line.args
         Puppet.info "scanning: %s" % files.inspect
-        Puppet.settings.setdefaults("puppetdoc",
+
+                    Puppet.settings.setdefaults(
+                "puppetdoc",
+        
             "document_all" => [false, "Document all resources"]
         )
         Puppet.settings[:document_all] = options[:all] || false
@@ -158,7 +161,7 @@ class Puppet::Application::Doc < Puppet::Application
 
         if options[:mode] == :pdf
             Puppet::Util::Reference.pdf(text)
-        else 
+        else
             puts text
         end
 

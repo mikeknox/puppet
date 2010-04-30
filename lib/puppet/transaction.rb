@@ -61,7 +61,7 @@ class Puppet::Transaction
     # Do any necessary cleanup.  If we don't get rid of the graphs, the
     # contained resources might never get cleaned up.
     def cleanup
-        if defined? @generated
+        if defined?(@generated)
             catalog.remove_resource(*@generated)
         end
     end
@@ -348,7 +348,7 @@ class Puppet::Transaction
 
     # The tags we should be checking.
     def tags
-        unless defined? @tags
+        unless defined?(@tags)
             self.tags = Puppet[:tags]
         end
 

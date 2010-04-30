@@ -13,9 +13,12 @@ module Functions
     end
 
     def self.autoloader
-        unless defined? @autoloader
-            @autoloader = Puppet::Util::Autoload.new(self,
+        unless defined?(@autoloader)
+
+                        @autoloader = Puppet::Util::Autoload.new(
+                self,
                 "puppet/parser/functions",
+        
                 :wrap => false
             )
         end
@@ -33,7 +36,7 @@ module Functions
 
         # We want to use a separate, hidden module, because we don't want
         # people to be able to call them directly.
-        unless defined? FCollection
+        unless defined?(FCollection)
             eval("module FCollection; end")
         end
 
