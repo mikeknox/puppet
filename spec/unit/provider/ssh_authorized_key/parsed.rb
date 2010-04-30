@@ -45,7 +45,6 @@ describe provider_class do
 
         key.flush
         text = @provider.target_object(file).read
-        text
     end
 
     PuppetTest.fakedata("data/providers/ssh_authorized_key/parsed").each { |file|
