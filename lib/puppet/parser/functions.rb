@@ -3,121 +3,121 @@ require 'puppet/parser/scope'
 
 module Puppet::Parser
 module Functions
-    # A module for managing parser functions.  Each specified function
-    # becomes an instance method on the Scope class.
+  # A module for managing parser functions.  Each specified function
+  # becomes an instance method on the Scope class.
 
-    @functions = {}
+  @functions = {}
 
-    class << self
-        include Puppet::Util
-    end
+  class << self
+    include Puppet::Util
+  end
 
-    def self.autoloader
-        unless defined?(@autoloader)
+  def self.autoloader
+    unless defined?(@autoloader)
 
-                        @autoloader = Puppet::Util::Autoload.new(
-                self,
-                "puppet/parser/functions",
+            @autoloader = Puppet::Util::Autoload.new(
+        self,
+        "puppet/parser/functions",
         
-                :wrap => false
-            )
-        end
-
-        @autoloader
+        :wrap => false
+      )
     end
 
-    # Create a new function type.
-    def self.newfunction(name, options = {}, &block)
-        name = symbolize(name)
+    @autoloader
+  end
 
-        raise Puppet::DevError, "Function #{name} already defined" if @functions.include? name
+  # Create a new function type.
+  def self.newfunction(name, options = {}, &block)
+    name = symbolize(name)
 
-        # We want to use a separate, hidden module, because we don't want
-        # people to be able to call them directly.
-        eval("module FCollection; end") unless defined?(FCollection)
+    raise Puppet::DevError, "Function #{name} already defined" if @functions.include? name
 
-        ftype = options[:type] || :statement
+    # We want to use a separate, hidden module, because we don't want
+    # people to be able to call them directly.
+    eval("module FCollection; end") unless defined?(FCollection)
 
-        unless ftype == :statement or ftype == :rvalue
-            raise Puppet::DevError, "Invalid statement type #{ftype.inspect}"
-        end
+    ftype = options[:type] || :statement
 
-        fname = "function_#{name}"
-        Puppet::Parser::Scope.send(:define_method, fname, &block)
-
-        # Someday we'll support specifying an arity, but for now, nope
-        #@functions[name] = {:arity => arity, :type => ftype}
-        @functions[name] = {:type => ftype, :name => fname}
-        @functions[name][:doc] = options[:doc] if options[:doc]
+    unless ftype == :statement or ftype == :rvalue
+      raise Puppet::DevError, "Invalid statement type #{ftype.inspect}"
     end
 
-    # Remove a function added by newfunction
-    def self.rmfunction(name)
-        name = symbolize(name)
+    fname = "function_#{name}"
+    Puppet::Parser::Scope.send(:define_method, fname, &block)
 
-        raise Puppet::DevError, "Function #{name} is not defined" unless @functions.include? name
+    # Someday we'll support specifying an arity, but for now, nope
+    #@functions[name] = {:arity => arity, :type => ftype}
+    @functions[name] = {:type => ftype, :name => fname}
+    @functions[name][:doc] = options[:doc] if options[:doc]
+  end
 
-        @functions.delete(name)
+  # Remove a function added by newfunction
+  def self.rmfunction(name)
+    name = symbolize(name)
 
-        fname = "function_#{name}"
-        Puppet::Parser::Scope.send(:remove_method, fname)
+    raise Puppet::DevError, "Function #{name} is not defined" unless @functions.include? name
+
+    @functions.delete(name)
+
+    fname = "function_#{name}"
+    Puppet::Parser::Scope.send(:remove_method, fname)
+  end
+
+  # Determine if a given name is a function
+  def self.function(name)
+    name = symbolize(name)
+
+    autoloader.load(name) unless @functions.include? name
+
+    (@functions.include? name) && @functions[name][:name]
+  end
+
+  def self.functiondocs
+    autoloader.loadall
+
+    ret = ""
+
+    @functions.sort { |a,b| a[0].to_s <=> b[0].to_s }.each do |name, hash|
+      #ret += "#{name}\n#{hash[:type]}\n"
+      ret += "#{name}\n#{"-" * name.to_s.length}\n"
+      if hash[:doc]
+        ret += Puppet::Util::Docs.scrub(hash[:doc])
+      else
+        ret += "Undocumented.\n"
+      end
+
+      ret += "\n\n- **Type**: #{hash[:type]}\n\n"
     end
 
-    # Determine if a given name is a function
-    def self.function(name)
-        name = symbolize(name)
+    ret
+  end
 
-        autoloader.load(name) unless @functions.include? name
+  def self.functions
+    @functions.keys
+  end
 
-        (@functions.include? name) && @functions[name][:name]
+  # Determine if a given function returns a value or not.
+  def self.rvalue?(name)
+    name = symbolize(name)
+
+    if @functions.include? name
+      case @functions[name][:type]
+      when :statement; return false
+      when :rvalue; return true
+      end
+    else
+      return false
     end
+  end
 
-    def self.functiondocs
-        autoloader.loadall
+  # Runs a newfunction to create a function for each of the log levels
 
-        ret = ""
-
-        @functions.sort { |a,b| a[0].to_s <=> b[0].to_s }.each do |name, hash|
-            #ret += "#{name}\n#{hash[:type]}\n"
-            ret += "#{name}\n#{"-" * name.to_s.length}\n"
-            if hash[:doc]
-                ret += Puppet::Util::Docs.scrub(hash[:doc])
-            else
-                ret += "Undocumented.\n"
-            end
-
-            ret += "\n\n- **Type**: #{hash[:type]}\n\n"
-        end
-
-        ret
+  Puppet::Util::Log.levels.each do |level|
+    newfunction(level, :doc => "Log a message on the server at level
+    #{level.to_s}.") do |vals|
+      send(level, vals.join(" "))
     end
-
-    def self.functions
-        @functions.keys
-    end
-
-    # Determine if a given function returns a value or not.
-    def self.rvalue?(name)
-        name = symbolize(name)
-
-        if @functions.include? name
-            case @functions[name][:type]
-            when :statement; return false
-            when :rvalue; return true
-            end
-        else
-            return false
-        end
-    end
-
-    # Runs a newfunction to create a function for each of the log levels
-
-    Puppet::Util::Log.levels.each do |level|
-        newfunction(level, :doc => "Log a message on the server at level
-        #{level.to_s}.") do |vals|
-            send(level, vals.join(" "))
-        end
-    end
+  end
 
 end
 end
