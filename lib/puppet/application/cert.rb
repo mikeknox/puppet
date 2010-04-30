@@ -63,9 +63,7 @@ class Puppet::Application::Cert < Puppet::Application
     end
 
     def setup
-        if Puppet.settings.print_configs?
-            exit(Puppet.settings.print_configs ? 0 : 1)
-        end
+        exit(Puppet.settings.print_configs ? 0 : 1) if Puppet.settings.print_configs?
 
         Puppet::Util::Log.newdestination :console
 

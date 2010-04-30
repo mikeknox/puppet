@@ -78,9 +78,7 @@ class Puppet::Application::Queue < Puppet::Application
 
         setup_logs
 
-        if Puppet.settings.print_configs?
-            exit(Puppet.settings.print_configs ? 0 : 1)
-        end
+        exit(Puppet.settings.print_configs ? 0 : 1) if Puppet.settings.print_configs?
 
         Puppet::Resource::Catalog.terminus_class = :active_record
 

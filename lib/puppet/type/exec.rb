@@ -175,9 +175,7 @@ module Puppet
 
             # Most validation is handled by the SUIDManager class.
             validate do |user|
-                unless Puppet.features.root?
-                    self.fail "Only root can execute commands as other users"
-                end
+                self.fail "Only root can execute commands as other users" unless Puppet.features.root?
             end
         end
 
@@ -200,9 +198,7 @@ module Puppet
             end
 
             munge do |dir|
-                if dir.is_a?(Array)
-                    dir = dir[0]
-                end
+                dir = dir[0] if dir.is_a?(Array)
 
                 dir
             end
@@ -434,9 +430,7 @@ module Puppet
             reqs = []
 
             # Stick the cwd in there if we have it
-            if self[:cwd]
-                reqs << self[:cwd]
-            end
+            reqs << self[:cwd] if self[:cwd]
 
             self[:command].scan(/^(#{File::SEPARATOR}\S+)/) { |str|
                 reqs << str
@@ -484,9 +478,7 @@ module Puppet
                     val = @parameters[check].value
                     val = [val] unless val.is_a? Array
                     val.each do |value|
-                        unless @parameters[check].check(value)
-                            return false
-                        end
+                        return false unless @parameters[check].check(value)
                     end
                 end
             }
@@ -498,9 +490,7 @@ module Puppet
         def checkexe(cmd)
             if cmd =~ /^\//
                 exe = cmd.split(/ /)[0]
-                unless FileTest.exists?(exe)
-                    raise ArgumentError, "Could not find executable #{exe}"
-                end
+                raise ArgumentError, "Could not find executable #{exe}" unless FileTest.exists?(exe)
                 unless FileTest.executable?(exe)
                     raise ArgumentError,
                         "#{exe} is not executable"
@@ -570,9 +560,7 @@ module Puppet
                 Dir.chdir(dir) do
                     environment = {}
 
-                    if self[:path]
-                        environment[:PATH] = self[:path].join(":")
-                    end
+                    environment[:PATH] = self[:path].join(":") if self[:path]
 
                     if envlist = self[:environment]
                         envlist = [envlist] unless envlist.is_a? Array
@@ -614,9 +602,7 @@ module Puppet
         def validatecmd(cmd)
             # if we're not fully qualified, require a path
             if cmd !~ /^\//
-                if self[:path].nil?
-                    self.fail "'#{cmd}' is both unqualifed and specified no search path"
-                end
+                self.fail "'#{cmd}' is both unqualifed and specified no search path" if self[:path].nil?
             end
         end
     end

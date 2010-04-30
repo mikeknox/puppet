@@ -92,9 +92,7 @@ require 'puppet/provider/parsedfile'
             end
         end
 
-        if target and FileTest.exist?(target)
-            File.chmod(file_perm, target)
-        end
+        File.chmod(file_perm, target) if target and FileTest.exist?(target)
     end
 
     # parse sshv2 option strings, wich is a comma separated list of
