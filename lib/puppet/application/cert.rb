@@ -50,7 +50,7 @@ class Puppet::Application::Cert < Puppet::Application
         elsif @signed
             hosts = :signed
         else
-            hosts = Puppet::Util::CommandLine.args.collect { |h| puts h; h.downcase }
+            hosts = command_line.args.collect { |h| puts h; h.downcase }
         end
         begin
             @ca.apply(:revoke, :to => hosts) if @mode == :destroy

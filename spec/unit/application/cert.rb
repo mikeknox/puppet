@@ -115,7 +115,7 @@ describe Puppet::Application::Cert do
             @cert_app.all = false
             @ca = stub_everything 'ca'
             @cert_app.ca = @ca
-            Puppet::Util::CommandLine.stubs(:args).returns([])
+            @cert_app.command_line.stubs(:args).returns([])
         end
 
         it "should delegate to the CertificateAuthority" do
@@ -133,7 +133,7 @@ describe Puppet::Application::Cert do
         end
 
         it "should delegate to ca.apply with the hosts given on command line" do
-            Puppet::Util::CommandLine.stubs(:args).returns(["host"])
+            @cert_app.command_line.stubs(:args).returns(["host"])
 
             @ca.expects(:apply).with { |mode,to| to[:to] == ["host"]}
 
@@ -141,7 +141,7 @@ describe Puppet::Application::Cert do
         end
 
         it "should send the currently set digest" do
-            Puppet::Util::CommandLine.stubs(:args).returns(["host"])
+            @cert_app.command_line.stubs(:args).returns(["host"])
             @cert_app.handle_digest(:digest)
 
             @ca.expects(:apply).with { |mode,to| to[:digest] == :digest}
@@ -151,7 +151,7 @@ describe Puppet::Application::Cert do
 
         it "should delegate to ca.apply with current set mode" do
             @cert_app.mode = "currentmode"
-            Puppet::Util::CommandLine.stubs(:args).returns(["host"])
+            @cert_app.command_line.stubs(:args).returns(["host"])
 
             @ca.expects(:apply).with { |mode,to| mode == "currentmode" }
 
@@ -160,7 +160,7 @@ describe Puppet::Application::Cert do
 
         it "should revoke cert if mode is clean" do
             @cert_app.mode = :destroy
-            Puppet::Util::CommandLine.stubs(:args).returns(["host"])
+            @cert_app.command_line.stubs(:args).returns(["host"])
 
             @ca.expects(:apply).with { |mode,to| mode == :revoke }
             @ca.expects(:apply).with { |mode,to| mode == :destroy }
