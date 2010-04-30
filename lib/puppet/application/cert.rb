@@ -2,7 +2,7 @@ require 'puppet'
 require 'puppet/application'
 require 'puppet/ssl/certificate_authority'
 
-Puppet::Application.new(:cert) do
+class Puppet::Application::Cert < Puppet::Application
 
     should_parse_config
 
@@ -44,7 +44,7 @@ Puppet::Application.new(:cert) do
         Puppet::Util::Log.level = :info
     end
 
-    command(:main) do
+    def main
         if @all
             hosts = :all
         elsif @signed
@@ -62,7 +62,7 @@ Puppet::Application.new(:cert) do
         end
     end
 
-    setup do
+    def setup
         if Puppet.settings.print_configs?
             exit(Puppet.settings.print_configs ? 0 : 1)
         end
