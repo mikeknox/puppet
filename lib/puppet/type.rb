@@ -57,7 +57,7 @@ class Type
 
         order.flatten!
 
-        return order
+        order
     end
 
     # Retrieve an attribute alias, if there is one.
@@ -141,7 +141,7 @@ class Type
             set &&= self.public_method_defined?(method)
         }
 
-        return ens
+        ens
     end
 
     # Deal with any options passed into parameters.
@@ -201,7 +201,7 @@ class Type
 
         param.metaparam = true
 
-        return param
+        param
     end
 
     # Find the namevar
@@ -254,7 +254,7 @@ class Type
 
         @namevar = param.name if param.isnamevar?
 
-        return param
+        param
     end
 
     def self.newstate(name, options = {}, &block)
@@ -308,7 +308,7 @@ class Type
             @properties << prop
         end
 
-        return prop
+        prop
     end
 
     def self.paramdoc(param)
@@ -346,20 +346,20 @@ class Type
     # does the name reflect a valid property?
     def self.validproperty?(name)
         name = symbolize(name)
-        return @validproperties.include?(name) && @validproperties[name]
+        @validproperties.include?(name) && @validproperties[name]
     end
 
     # Return the list of validproperties
     def self.validproperties
         return {} unless defined?(@parameters)
 
-        return @validproperties.keys
+        @validproperties.keys
     end
 
     # does the name reflect a valid parameter?
     def self.validparameter?(name)
         raise Puppet::DevError, "Class #{self} has not defined parameters" unless defined?(@parameters)
-        return !!(@paramhash.include?(name) or @@metaparamhash.include?(name))
+        !!(@paramhash.include?(name) or @@metaparamhash.include?(name))
     end
 
     # This is a forward-compatibility method - it's the validity interface we'll use in Puppet::Resource.
@@ -389,7 +389,7 @@ class Type
             self.newattr(prop_name)
             return true
         end
-        return false
+        false
     end
 
     # abstract accessing parameters and properties, and normalize
@@ -472,7 +472,7 @@ class Type
     # retrieve the 'should' value for a specified property
     def should(name)
         name = attr_alias(name)
-        return (prop = @parameters[name] and prop.is_a?(Puppet::Property)) ? prop.should : nil
+        (prop = @parameters[name] and prop.is_a?(Puppet::Property)) ? prop.should : nil
     end
 
     # Create the actual attribute instance.  Requires either the attribute
@@ -521,14 +521,14 @@ class Type
     # Is the named property defined?
     def propertydefined?(name)
         name = name.intern unless name.is_a? Symbol
-        return @parameters.include?(name)
+        @parameters.include?(name)
     end
 
     # Return an actual property instance by name; to return the value, use 'resource[param]'
     # LAK:NOTE(20081028) Since the 'parameter' method is now a superset of this method,
     # this one should probably go away at some point.
     def property(name)
-        return (obj = @parameters[symbolize(name)] and obj.is_a?(Puppet::Property)) ? obj : nil
+        (obj = @parameters[symbolize(name)] and obj.is_a?(Puppet::Property)) ? obj : nil
     end
 
     # For any parameters or properties that have defaults and have not yet been
@@ -567,7 +567,7 @@ class Type
     def value(name)
         name = attr_alias(name)
 
-        return (obj = @parameters[name] and obj.respond_to?(:value)) ? obj.value : nil
+        (obj = @parameters[name] and obj.respond_to?(:value)) ? obj.value : nil
     end
 
     def version
@@ -625,7 +625,7 @@ class Type
     # this is a retarded hack method to get around the difference between
     # component children and file children
     def self.depthfirst?
-        return defined?(@depthfirst) && @depthfirst
+        defined?(@depthfirst) && @depthfirst
     end
 
     def depthfirst?
@@ -693,7 +693,7 @@ class Type
         }
 
         #self.debug("#{self} sync status is #{insync}")
-        return insync
+        insync
     end
 
     # retrieve the current value of all contained properties
@@ -866,7 +866,7 @@ class Type
     # does the type have an object with the given name?
     def self.has_key?(name)
         raise "Global resource access is deprecated"
-        return @objects.has_key?(name)
+        @objects.has_key?(name)
     end
 
     # Retrieve all known instances.  Either requires providers or must be overridden.
@@ -939,7 +939,7 @@ class Type
         hash.each do |param, value|
             resource[param] = value
         end
-        return resource
+        resource
     end
 
     # Create the path for logging and such.
@@ -1356,7 +1356,7 @@ class Type
             @defaultprovider = retval
         end
 
-        return @defaultprovider
+        @defaultprovider
     end
 
     def self.provider_hash_by_type(type)
@@ -1374,7 +1374,7 @@ class Type
 
         # If we don't have it yet, try loading it.
         @providerloader.load(name) unless provider_hash.has_key?(name)
-        return provider_hash[name]
+        provider_hash[name]
     end
 
     # Just list all of the providers.
@@ -1385,7 +1385,7 @@ class Type
     def self.validprovider?(name)
         name = Puppet::Util.symbolize(name)
 
-        return (provider_hash.has_key?(name) && provider_hash[name].suitable?)
+        (provider_hash.has_key?(name) && provider_hash[name].suitable?)
     end
 
     # Create a new provider of a type.  This method must be called
@@ -1431,7 +1431,7 @@ class Type
             :attributes => options
         )
 
-        return provider
+        provider
     end
 
     # Make sure we have a :provider parameter defined.  Only gets called if there
@@ -1571,7 +1571,7 @@ class Type
             }
         }
 
-        return reqs
+        reqs
     end
 
     # Build the dependencies associated with an individual object.
@@ -1620,7 +1620,7 @@ class Type
         # have been synced a long time ago (e.g., a file only gets updated
         # once a month on the server and its schedule is daily; the last sync time
         # will have been a month ago, so we'd end up checking every run).
-        return schedule.match?(self.cached(:checked).to_i)
+        schedule.match?(self.cached(:checked).to_i)
     end
 
     # Define the initial list of tags.
@@ -1837,7 +1837,7 @@ class Type
     # For now, leave the 'name' method functioning like it used to.  Once 'title'
     # works everywhere, I'll switch it.
     def name
-        return self[:name]
+        self[:name]
     end
 
     # Look up our parent in the catalog, if we have one.
@@ -1894,7 +1894,7 @@ class Type
             end
         end
 
-        return @title
+        @title
     end
 
     # convert to a string
@@ -1924,7 +1924,7 @@ class Type
 
         # FIXME I'm currently ignoring 'parent' and 'path'
 
-        return trans
+        trans
     end
 
     def to_resource

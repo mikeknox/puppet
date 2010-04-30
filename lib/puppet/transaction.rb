@@ -181,7 +181,7 @@ class Puppet::Transaction
             found_failed = true
         end
 
-        return found_failed
+        found_failed
     end
 
     # A general method for recursively generating new resources from a
@@ -228,7 +228,7 @@ class Puppet::Transaction
     # Generate a transaction report.
     def generate_report
         @report.calculate_metrics
-        return @report
+        @report
     end
 
     # Should we ignore tags?
@@ -335,7 +335,7 @@ class Puppet::Transaction
         else
             return false
         end
-        return true
+        true
     end
 
     # The tags we should be checking.

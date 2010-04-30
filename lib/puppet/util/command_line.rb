@@ -3,12 +3,12 @@ module Puppet
         class CommandLine
             def self.subcommand_name(*args)
                 subcommand_name, args = subcommand_and_args(*args)
-                return subcommand_name
+                subcommand_name
             end
 
             def self.args(*args)
                 subcommand_name, args = subcommand_and_args(*args)
-                return args
+                args
             end
 
 

@@ -31,7 +31,7 @@ module Puppet
         end
 
         def longname
-            return [@type,@name].join('--')
+            [@type,@name].join('--')
         end
 
         def ref
@@ -40,7 +40,7 @@ module Puppet
         end
 
         def tags
-            return @tags
+            @tags
         end
 
         # Convert a defined type into a component.
@@ -60,7 +60,7 @@ module Puppet
         end
 
         def to_s
-            return "#{@type}(#{@name}) => #{super}"
+            "#{@type}(#{@name}) => #{super}"
         end
 
         def to_manifest
@@ -211,7 +211,7 @@ module Puppet
                 raise
             end
 
-            return catalog
+            catalog
         end
 
         def to_ref

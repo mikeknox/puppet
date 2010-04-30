@@ -182,7 +182,7 @@ class Puppet::Application
 
         def should_parse_config?
             @parse_config = true if ! defined?(@parse_config)
-            return @parse_config
+            @parse_config
         end
 
         # used to declare code that handle an option

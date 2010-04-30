@@ -289,7 +289,7 @@ class Puppet::Parser::Lexer
             @indefine = false
             array.push([token,str])
         }
-        return array
+        array
     end
 
     def file=(file)
@@ -541,7 +541,7 @@ class Puppet::Parser::Lexer
 
     # returns the content of the currently accumulated content cache
     def commentpop
-        return @commentstack.pop[0]
+        @commentstack.pop[0]
     end
 
     def getcomment(line = nil)
@@ -551,7 +551,7 @@ class Puppet::Parser::Lexer
             @commentstack.push(['', @line])
             return comment[0]
         end
-        return ''
+        ''
     end
 
     def commentpush

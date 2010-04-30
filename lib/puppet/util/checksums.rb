@@ -8,7 +8,7 @@ module Puppet::Util::Checksums
 
     # Strip the checksum type from an existing checksum
     def sumtype(checksum)
-        return checksum =~ /^\{(\w+)\}/ ? $1 : nil
+        checksum =~ /^\{(\w+)\}/ ? $1 : nil
     end
 
     # Calculate a checksum using Digest::MD5.
@@ -27,7 +27,7 @@ module Puppet::Util::Checksums
         require 'digest/md5'
 
         digest = Digest::MD5.new()
-        return checksum_file(digest, filename,  lite)
+        checksum_file(digest, filename,  lite)
     end
 
     # Calculate a checksum of the first 500 chars of a file's content using Digest::MD5.
@@ -39,7 +39,7 @@ module Puppet::Util::Checksums
         require 'digest/md5'
         digest = Digest::MD5.new()
         yield digest
-        return digest.hexdigest
+        digest.hexdigest
     end
 
     alias :md5lite_stream :md5_stream
@@ -72,7 +72,7 @@ module Puppet::Util::Checksums
         require 'digest/sha1'
 
         digest = Digest::SHA1.new()
-        return checksum_file(digest, filename, lite)
+        checksum_file(digest, filename, lite)
     end
 
     # Calculate a checksum of the first 500 chars of a file's content using Digest::SHA1.
@@ -84,7 +84,7 @@ module Puppet::Util::Checksums
         require 'digest/sha1'
         digest = Digest::SHA1.new()
         yield digest
-        return digest.hexdigest
+        digest.hexdigest
     end
 
     alias :sha1lite_stream :sha1_stream
@@ -111,6 +111,6 @@ module Puppet::Util::Checksums
             end
         end
 
-        return digest.hexdigest
+        digest.hexdigest
     end
 end

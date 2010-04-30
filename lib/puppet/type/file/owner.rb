@@ -47,7 +47,7 @@ module Puppet
                 return true
             end
 
-            return false
+            false
         end
 
         # Determine if the user is valid, and if so, return the UID
@@ -102,7 +102,7 @@ module Puppet
                 currentvalue = :silly
             end
 
-            return currentvalue
+            currentvalue
         end
 
         def sync
@@ -126,7 +126,7 @@ module Puppet
                 raise Puppet::Error, "Failed to set owner to '#{uid}': #{detail}"
             end
 
-            return :file_changed
+            :file_changed
         end
     end
 end
