@@ -483,7 +483,7 @@ describe Puppet::Parser::Compiler do
     end
   end
 
-  describe "when evaluating AST nodes with no AST nodes present" do
+  describe "when evaluating Expression nodes with no Expression nodes present" do
 
     it "should do nothing" do
       @compiler.expects(:ast_nodes?).returns(false)
@@ -494,7 +494,7 @@ describe Puppet::Parser::Compiler do
     end
   end
 
-  describe "when evaluating AST nodes with AST nodes present" do
+  describe "when evaluating Expression nodes with Expression nodes present" do
 
     before do
       @compiler.known_resource_types.stubs(:nodes?).returns true

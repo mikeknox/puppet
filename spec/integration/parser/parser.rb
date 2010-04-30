@@ -9,7 +9,7 @@ describe Puppet::Parser::Parser do
   end
 
   describe "when parsing comments before statement" do
-    it "should associate the documentation to the statement AST node" do
+    it "should associate the documentation to the statement Expression node" do
       ast = @parser.parse("""
       # comment
       class test {}
