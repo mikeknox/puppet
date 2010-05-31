@@ -1,4 +1,5 @@
 require 'puppet/util/rails/reference_serializer'
+require 'puppet/rails'
 
 class Puppet::Rails::ParamValue < ActiveRecord::Base
   include Puppet::Util::ReferenceSerializer
