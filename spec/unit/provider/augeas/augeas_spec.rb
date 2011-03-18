@@ -249,6 +249,10 @@ describe provider_class do
   end
 
   describe "need to run" do
+    before do
+      File.stubs(:delete)
+    end
+
     it "should handle no filters" do
       resource = stub("resource")
       resource.stubs(:[]).returns(false).then.returns("").then.returns("")
@@ -339,6 +343,98 @@ describe provider_class do
       provider.stubs(:get_augeas_version).returns("0.3.5")
       provider.need_to_run?.should == false
     end
+
+    # Ticket 2728 (diff files)
+    describe "and Puppet[:show_diff] is set" do
+      before do
+        Puppet[:show_diff] = true
+      end
+
+      it "should call diff when a file is shown to have been changed" do
+        file = "/etc/hosts"
+
+        resource = stub("resource")
+        resource.stubs(:[]).returns(false).then.returns("set /files/foo bar").then.returns("")
+        provider = provider_class.new(resource)
+        augeas_stub = stub("augeas")
+        augeas_stub.expects("set").with("/augeas/save", "newfile")
+        augeas_stub.expects("save").returns(true)
+        augeas_stub.expects("get").with("/augeas/events/saved").returns(["/files#{file}"])
+        augeas_stub.stubs("match").with("/augeas/events/saved").returns(["/augeas/events/saved"])
+        augeas_stub.stubs("close")
+
+        provider.aug= augeas_stub
+        provider.stubs(:get_augeas_version).returns("0.7.2")
+        provider.expects(:diff).with("#{file}", "#{file}.augnew")
+        provider.need_to_run?.should == true
+      end
+
+      it "should call diff for each file thats changed" do
+        file1 = "/etc/hosts"
+        file2 = "/etc/resolv.conf"
+
+        resource = stub("resource")
+        resource.stubs(:[]).returns(false).then.returns(["set /files/foo bar", "set /files/bar foo"]).then.returns("")
+        provider = provider_class.new(resource)
+        augeas_stub = stub("augeas")
+        augeas_stub.expects("set").with("/augeas/save", "newfile")
+        augeas_stub.expects("save").returns(true)
+        augeas_stub.expects("get").with("/augeas/events/saved[1]").returns(["/files#{file1}"])
+        augeas_stub.expects("get").with("/augeas/events/saved[2]").returns(["/files#{file2}"])
+        augeas_stub.stubs("match").with("/augeas/events/saved").returns(["/augeas/events/saved[1]", "/augeas/events/saved[2]"])
+        augeas_stub.stubs("close")
+
+        provider.aug= augeas_stub
+        provider.stubs(:get_augeas_version).returns("0.7.2")
+        provider.expects(:diff).with("#{file1}", "#{file1}.augnew")
+        provider.expects(:diff).with("#{file2}", "#{file2}.augnew")
+        provider.need_to_run?.should == true
+      end
+
+      describe "and resource[:root] is set" do
+       before do
+       end
+
+        it "should call diff when a file is shown to have been changed" do
+          root = "/tmp/foo"
+          file = "/etc/hosts"
+
+          resource = stub("resource")
+          resource.stubs(:root).returns("#{root}")
+          resource.stubs(:[]).returns(false).then.returns("set /files/foo bar").then.returns("")
+          provider = provider_class.new(resource)
+          augeas_stub = stub("augeas")
+          augeas_stub.expects("set").with("/augeas/save", "newfile")
+          augeas_stub.expects("save").returns(true)
+          augeas_stub.expects("get").with("/augeas/events/saved").returns(["/files#{root}#{file}"])
+          augeas_stub.stubs("match").with("/augeas/events/saved").returns(["/augeas/events/saved"])
+          augeas_stub.stubs("close")
+ 
+          provider.aug= augeas_stub
+          provider.stubs(:get_augeas_version).returns("0.7.2")
+          provider.expects(:diff).with("#{root}#{file}", "#{root}#{file}.augnew")
+          provider.need_to_run?.should == true
+        end
+      end
+    end
+
+    it "should not call diff if no files change" do
+      file = "/etc/hosts"
+
+      resource = stub("resource")
+      resource.stubs(:[]).returns(false).then.returns("set /files/foo bar").then.returns("")
+      provider = provider_class.new(resource)
+      augeas_stub = stub("augeas")
+      augeas_stub.expects("set").with("/augeas/save", "newfile")
+      augeas_stub.expects("save").returns(true)
+      augeas_stub.stubs("match").with("/augeas/events/saved").returns([])
+      augeas_stub.stubs("close")
+
+      provider.aug= augeas_stub
+      provider.stubs(:get_augeas_version).returns("0.7.2")
+      provider.expects(:diff).never
+      provider.need_to_run?.should == false
+    end
   end
 
   describe "augeas execution integration" do
@@ -349,6 +445,7 @@ describe provider_class do
       @augeas = stub("augeas")
       @provider.aug= @augeas
       @provider.stubs(:get_augeas_version).returns("0.3.5")
+      @augeas.stubs(:match).with("/augeas/events/saved")
     end
 
     it "should handle set commands" do
